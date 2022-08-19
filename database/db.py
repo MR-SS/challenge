@@ -9,11 +9,17 @@ engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 
 Base = declarative_base()
-SessionLocal = sessionmaker(engine=engine)
+SessionLocal = sessionmaker(bind=engine, autocommit=False)
+
 
 def get_db():
     session = SessionLocal()
     try:
         yield session
-    finally :
+    finally:
         session.close()
+
+
+def init_database():
+    from .models import Base as ModelsBase
+    ModelsBase.metadata.create_all(engine)
