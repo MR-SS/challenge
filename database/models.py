@@ -1,19 +1,16 @@
-from ast import Str
-from email.policy import default
+from .hash import Hash
 from enum import unique
 from unicodedata import name
 from sqlalchemy.sql import func
 from typing import List
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Boolean, false
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from database.db import Base
-from sqlalchemy.orm.session import Session
+from sqlalchemy.orm.session import Session 
 from .db import engine
 
 Base = declarative_base()
-
-
 class Dbuser(Base):
     __tablename__ = 'users'
 
@@ -43,3 +40,4 @@ class User_transaction(Base):
     user = relationship("Dbuser", back_populates="buyer")
     coupon_id = Column(Integer, ForeignKey("coupons.id"))
     ticket = relationship("Dbcoupon", back_populates="bcopon")
+

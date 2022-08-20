@@ -11,21 +11,19 @@ from fastapi import Depends
 
 
 def create_user(db: Session):
-    user = Dbuser(
+    db.add(Dbuser(
+        username="admin",
+        password=Hash.bcrypt("admin"),
+        is_admin=True
+    ))
+
+    db.add(Dbuser(
         username="sajjad",
         password=Hash.bcrypt("123"),
         is_admin=False
 
-    ),
-    admin_1 = Dbuser(
-        username="admin",
-        password=Hash.bcrypt("admin"),
-        is_admin=True
-    )
-
-    db.add(admin_1)
+    ))
     db.commit()
-    # return user
 
 
 # login user
@@ -56,11 +54,6 @@ def get_user_by_username(username, db: Session):
     return db.query(models.Dbuser).filter(models.Dbuser.username == username).first()
 
 
-# def delete_user(id, db:Session):
-#     user = get_user(id, db)
-#     db.delete(user)
-#     db.commit()
-#     return 'ok'
 def make_gift(count: int, db: Session):
     coupons = []
     for i in range(count):
@@ -73,7 +66,7 @@ def make_gift(count: int, db: Session):
             'id': coupon.id,
             'code': coupon.code
         })
-    return coupon
+    return coupons
 
 
 '''
