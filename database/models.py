@@ -18,7 +18,8 @@ class Dbuser(Base):
     username = Column('username', String(50), unique=True)
     password = Column('password', String)
     is_admin = Column(Boolean, default=False)
-    buyer = relationship("User_transaction", back_populates="user")
+    # user_id =Column('user_id',Integer,ForeignKey ('userTransactions'))
+    buyer = relationship("User_transaction", back_populates="winner")
 
 
 class Dbcoupon(Base):
@@ -29,15 +30,17 @@ class Dbcoupon(Base):
     validate_from = Column(DateTime(timezone=True), server_default=func.now())
     validate_to = Column(DateTime(timezone=True), server_default=func.now())
     active = Column(Boolean)
-    bcopon = relationship("User_transaction", back_populates="ticket")
+    bcopon = relationship("User_transaction", back_populates="co_id")
 
 
 class User_transaction(Base):
     __tablename__ = "userTransactions"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
-    user = relationship("Dbuser", back_populates="buyer")
-    coupon_id = Column(Integer, ForeignKey("coupons.id"))
-    ticket = relationship("Dbcoupon", back_populates="bcopon")
+
+    user_name= Column(String, ForeignKey("users.username"))
+    winner = relationship("Dbuser", back_populates="buyer")
+
+    code = Column(Integer, ForeignKey("coupons.code"))
+    co_id = relationship("Dbcoupon", back_populates="bcopon")
 
