@@ -9,6 +9,7 @@ from database.db_user import get_all_users, make_gift
 from auth.oauth2 import reusable_oath, decode_token
 from database.models import User_transaction
 from fastapi.exceptions import HTTPException
+from sqlalchemy.sql import exists
 
 
 
@@ -56,13 +57,14 @@ def submit_coupon(request:Request,coupon: Valid_coupon ,db=Depends(get_db)):
     if token == None :
         raise HTTPException(401,"no authorize header")
     user_auth = decode_token(token)
-    user_object = db.query(User_transaction).filter_by(user_id=user_auth["username"]).first()
+    user_object = db.query(User_transaction).filter_by(user_name= user_auth["username"]).first()
+    print("khorooji goh ine",user_object)
     if( user_object == None):
-        # print("mitooni")
+    #     # print("mitooni")
         def add_transaction(username,code:int, db=Depends(get_db)):
-            coupon_winner = db.query(User_transaction).filter_by(user=user_auth["username"]).first()
+            # coupon_winner = db.query(User_transaction).filter_by(winner=user_auth["username"]).first()
             db.add(User_transaction(
-                user = coupon_winner,
+                user_name = username,
                 code = code
             ))
             db.commit()
@@ -73,5 +75,5 @@ def submit_coupon(request:Request,coupon: Valid_coupon ,db=Depends(get_db)):
         '''
 
     else:
-        print ("nmitooni")
+        raise Exception ("you get your gitf, Go Away!!!")
 
