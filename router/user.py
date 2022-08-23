@@ -1,4 +1,5 @@
 
+from time import sleep
 from fastapi import Body, Depends, Path, Query, Response, APIRouter, Header, Request
 from pydantic import BaseModel
 from typing import Optional, List, Dict
@@ -10,8 +11,11 @@ from auth.oauth2 import reusable_oath, decode_token
 from database.models import User_transaction
 from fastapi.exceptions import HTTPException
 from sqlalchemy.sql import exists
+from threading import Lock
 
 
+#lock thread for avoid race condition
+lock = Lock()
 
 router = APIRouter(tags=['user'])
 
@@ -61,17 +65,23 @@ def submit_coupon(request:Request,coupon: Valid_coupon ,db=Depends(get_db)):
     if token == None :
         raise HTTPException(401,"no authorize header")
     user_auth = decode_token(token)
+    lock.acquire()
+    '''
+            RACE CONDITION
+    '''
     user_object = db.query(User_transaction).filter_by(user_name= user_auth["username"]).first()
-    print("khorooji goh ine",user_object)
+    # print("khorooji  in goh ine",user_object)
+    lock.release()
     if( user_object == None):
-    #     # print("mitooni")
+        lock.acquire()
+        # sleep(0.1) # add delay  to get race condition in postgres
         def add_transaction(username,code:int, db=Depends(get_db)):
-            # coupon_winner = db.query(User_transaction).filter_by(winner=user_auth["username"]).first()
             db.add(User_transaction(
                 user_name = username,
-                code = code
+                used_code = code
             ))
             db.commit()
+            lock.release()
             result.append({
                 "user_name" : username,
                 "code": code
@@ -79,10 +89,9 @@ def submit_coupon(request:Request,coupon: Valid_coupon ,db=Depends(get_db)):
             # return  db.query(User_transaction).all()
             return result
         return add_transaction(user_auth["username"],code,db)
-        '''
-            RACE CONDITION
-        '''
+
 
     else:
         raise HTTPException(200,"you get your gitf, Go Away!!!")
+    
 
