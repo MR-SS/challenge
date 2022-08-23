@@ -1,17 +1,21 @@
 FROM python:3.8-slim
 
-#adding non root user
-# RUN addgroup app && adduser -S -G app app 
-# USER app
-
+RUN apt-get update && apt-get install -y
 # Set environment varibles
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+
+#Add a user with userid 8877 and name nonroot
+RUN useradd  -u 8877 nonroot
+
+
 
 WORKDIR /app
 COPY requirements.txt ./
 RUN pip3 install --no-cache-dir -r requirements.txt
 
+#Run Container as nonroot
+USER nonroot
 COPY . .
 
 

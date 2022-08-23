@@ -1,6 +1,3 @@
-from urllib.request import Request
-from database.db import get_db
-from urllib import response
 from fastapi.testclient import TestClient
 from fastapi import FastAPI, Depends
 import json
