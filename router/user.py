@@ -41,15 +41,19 @@ def generate_coupon(request: Request, count: CouponCount, db=Depends(get_db)):
     if token == None :
         raise HTTPException(401,"no authorize header")
     num = count.count
-    user_auth = decode_token(token)
-    if (user_auth["is_admin"] == True):
-        return make_gift(num, db)
+    if type(num) == int and num < 10:
+        user_auth = decode_token(token)
+        if (user_auth["is_admin"] == True):
+            return make_gift(num, db)
+        else:
+            raise HTTPException(401,"Not Authorize user!!")
     else:
-        raise HTTPException(401,"Not Authorize user!!")
+        raise  HTTPException(200,"count number must be int and under 10 count !!!!")    
         
 @router.post("/submit-coupon", tags=["coupon"])
 def submit_coupon(request:Request,coupon: Valid_coupon ,db=Depends(get_db)):
     code = coupon.code
+    result = []
     '''
         can check only users can add coupon
     '''
@@ -68,12 +72,17 @@ def submit_coupon(request:Request,coupon: Valid_coupon ,db=Depends(get_db)):
                 code = code
             ))
             db.commit()
-            return  db.query(User_transaction).all()
+            result.append({
+                "user_name" : username,
+                "code": code
+            })
+            # return  db.query(User_transaction).all()
+            return result
         return add_transaction(user_auth["username"],code,db)
         '''
             RACE CONDITION
         '''
 
     else:
-        raise Exception ("you get your gitf, Go Away!!!")
+        raise HTTPException(200,"you get your gitf, Go Away!!!")
 
