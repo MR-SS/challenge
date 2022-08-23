@@ -48,7 +48,7 @@ if __name__ == '__main__':
     #     json={"code": coupon_code }
     # )
     url= []
-    for i in range(16):
+    for i in range(200):
         rs = grequests.post(base_url + "/submit-coupon",
             headers={
             "Authrization" : get_token
