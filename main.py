@@ -1,3 +1,5 @@
+from itertools import count
+from pydoc import cli
 from typing import List
 from router import user
 from fastapi import Depends, FastAPI
@@ -16,6 +18,26 @@ app = FastAPI()
 app.include_router(user.router)
 # app.include_router(authentication.router)
 session = Session(engine)
+
+# API Throttling
+import redis
+
+threshhold =10
+period =20
+
+def threshhold(key):
+    req = redis.Redis(host="redis-server" ,db=0)
+    if req.exists(key):
+        req.set(key,1,ex=period)
+    else :
+        req.incr(key)
+        count = int(req.get(key).decode())
+        print("user total request",count)
+        if count > threshhold:
+            print ( "Blocked")
+        else:
+            pass
+
 
 
 @app.get("/")
