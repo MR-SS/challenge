@@ -8,8 +8,7 @@ import requests
 import grequests
 import random
 
-
-base_url ='http://localhost:8000'
+base_url ='http://localhost:8009'
 username = 'mamad' + str(random.randint(100000, 999999))
 
 if __name__ == '__main__':
@@ -28,6 +27,9 @@ if __name__ == '__main__':
             "password": "admin"
         },
     )
+    print(response.status_code)
+    print("")
+    print ("sallam",response.text)
     get_token = response.json().get("access_token")
     # std_handler = logging.StreamHandler()
     # std_handler.setLevel(logging.INFO)
@@ -62,6 +64,7 @@ if __name__ == '__main__':
     # badesh print ba hamoon add
     # for resp in grequests.imap(url):
     results = grequests.map(url)
+    # print ( results)
     row_numver =db.query(User_transaction).filter_by(user_name = username).count()
     print('created records: ', row_numver)
     assert row_numver == 1

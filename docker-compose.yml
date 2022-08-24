@@ -3,19 +3,20 @@
 version: "3.8"
 
 services:
-  web:
-    build: .
-    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uvicorn main:app --host 0.0.0.0'
-    volumes:
-      - .:/app
-    ports:
-      - 8000:8000
-    environment:
-      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-    depends_on:
-      - db
+  # web:
+  #   build: .
+  #   command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uvicorn main:app --host 0.0.0.0'
+  #   volumes:
+  #     - .:/app
+  #   ports:
+  #     - 8000:8000
+  #   environment:
+  #     - POSTGRES_USERNAME=${POSTGRES_USERNAME}
+  #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+  #     - POSTGRES_DB=${POSTGRES_DB}
+  #   depends_on:
+  #     - db
+  #     - redis
 
   db:
     image: "bitnami/postgresql:14-debian-11"
@@ -30,6 +31,13 @@ services:
       #    restart: unless-stopped
       # env_file:
       #   - .env
+  redis:      
+    image: "bitnami/redis:6.2"
+    ports:
+      - 6379:6379
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+
 
 volumes:
   postgres: 
