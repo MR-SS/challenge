@@ -38,4 +38,4 @@ class CouponBase(BaseModel):
     code :str
     active:bool
 class Valid_coupon(BaseModel):
-    code : str
+    code : int

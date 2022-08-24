@@ -26,7 +26,7 @@ class Dbcoupon(Base):
     __tablename__ = 'coupons'
 
     id = Column(Integer, primary_key=True, index=True)
-    code = Column(String(100), unique=True)
+    code = Column(Integer, unique=True)
     validate_from = Column(DateTime(timezone=True), server_default=func.now())
     validate_to = Column(DateTime(timezone=True), server_default=func.now())
     active = Column(Boolean)
@@ -41,6 +41,6 @@ class User_transaction(Base):
     user_name= Column(String, ForeignKey("users.username"))
     winner = relationship("Dbuser", back_populates="buyer")
 
-    code = Column(Integer, ForeignKey("coupons.code"))
+    used_code = Column(Integer, ForeignKey("coupons.code"))
     co_id = relationship("Dbcoupon", back_populates="bcopon")
 
