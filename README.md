@@ -70,9 +70,9 @@ it's just simple app. just we have 4 api call:
 
 Since we have two different roles in the web application (admin and user) we need to distinguish them and for this, I implemented an endpoint called /login witch is responsible for authenticating users. When a user sends a request to this endpoint along whit his credentials, if he exists in the database as a valid user, he will get a jason object including a **authorization token** witch is a **jwt token** in the response. So in further requests on behalf of this user, we can put this token in a specific header called **Authrization header** in order to keep the user logged in. It is good to note that we only have to include this header in those requests whitch requaire a user to be authorized. Since the implementation of my jwt token was a sample one, I wasn't able to connect it with swagger. So those request witch requaire authorization proccess (request to /generate-coupon & /submit-coupon) should trigger using curl.
 
-    enter code herecurl -X 'POST' 'http://localhost:8000/generate-coupon' -H 'Authrization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaXNfYWRtaW4iOnRydWUsImV4cCI6MTY2MTM3NDA5Mn0.qO30l1oVuvR4-NLqmlBOxc9OGdElP4yqtOJL1vRqhUA' -H 'accept: application/json' -H 'Content-Type: application/json' -d '{ "count": 1}'
+    curl -X 'POST' 'http://localhost:8000/generate-coupon' -H 'Authrization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaXNfYWRtaW4iOnRydWUsImV4cCI6MTY2MTM3NDA5Mn0.qO30l1oVuvR4-NLqmlBOxc9OGdElP4yqtOJL1vRqhUA' -H 'accept: application/json' -H 'Content-Type: application/json' -d '{ "count": 1}'
 >
-    curl -X 'POST' 'http://localhost:8000/submit-coupon' -H 'Authrization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaXNfYWRtaW4iOnRydWUsImV4cCI6MTY2MTM3NDA5Mn0.qO30l1oVuvR4-NLqmlBOxc9OGdElP4yqtOJL1vRqhUA' -H 'accept: application/json' -H 'Content-Type: application/json' -d '{ "count": 1}'
+    curl -X 'POST' 'http://localhost:8000/submit-coupon' -H 'Authrization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaXNfYWRtaW4iOnRydWUsImV4cCI6MTY2MTM3NDA5Mn0.qO30l1oVuvR4-NLqmlBOxc9OGdElP4yqtOJL1vRqhUA' -H 'accept: application/json' -H 'Content-Type: application/json' -d '{ "code": 1234}'
 
 ## Unit test
 
@@ -95,7 +95,7 @@ first of all i need to have a copy of main database. so i create a test detabase
 ## detail about unit tests:
 
  - test_create_use : create successful user  and ( user is hard coded! )      
- `   http://localhost:8000/login`
+ `http://localhost:8000/login`
  - test_submit_coupon : submit valid coupon
  - test_login_valid_user :  make a specific user and test it .if can login or not
  - test_login_invalid_user : it is clear
