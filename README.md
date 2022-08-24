@@ -19,7 +19,7 @@ all challenge is about make gift coupon system for users that each user can only
 
 - Unit test with **pytest**
 
-- It is dockerized
+- dockerized
 
   
 
@@ -28,11 +28,11 @@ all challenge is about make gift coupon system for users that each user can only
  
 1.git clone https://github.com/MR-SS/challenge.git
 
-2. cd challenge
+2.cd challenge
 
 3.docker-compose up --build -d
 
-now opn http://localhost:8000
+now open http://localhost:8000
 
   
 
@@ -48,7 +48,7 @@ in this challenge i try to create super secure coupon system with python [FastAp
 
 -  **Intuitive**: Great editor support. Completion everywhere. Less time debugging.
 
--  **Interactive API docs**: Automatic interactive API documentation (provided by [Swagger UI](https://github.com/swagger-api/swagger-ui)
+-  **Interactive API docs**: Automatic interactive API documentation ( provided by [Swagger UI](https://github.com/swagger-api/swagger-ui)) 
 
   
 
@@ -60,7 +60,7 @@ it's just simple app. just we have 4 api call:
 
 1. login : get authentication token(jwt)
 
-2. default : have two hard coded user in db ( sajjad ( admin = False ) , admin ( admin = True ))
+2. default : have two hard coded user in db ( sajjad ( is_admin = False ) , admin ( is_admin = True ))
 
 3. generate-coupon : only admin can do it
 
@@ -87,7 +87,7 @@ consider these things:
  
 ### Security issue that i found during writing unit test:
 
-first of all i need to have a copy of main database. so i create a test detabase for all my test cases and each test case test a vulnerability like DOS, api rate limt ,jwt attacks ( i user jwt for authorization) and the Big one race conditions ( i think the main point of the challenge is race conditions and how to prevent it )
+first of all i need to have a copy of main database. so i create a test detabase for all my test cases and each test case test a vulnerability like DOS, api rate limt ,jwt attacks ( i user jwt for authorization) and the Big one race conditions ( i think the main point of the challenge is race conditions and how to prevent it . i will talk about later)
 
 ## flow of all unit test:
  in all unit test . i make specific user with and the try to request other api call and check that have  successful  response or not . with **assert** command can check them
@@ -118,7 +118,8 @@ first of all i need to have a copy of main database. so i create a test detabase
 Here, the main vulnerabillity is race condition. I make a file called `race_condition.py`. the hole point is db make a condition to check if user used a coupen before or not and after that make an insert query in that db. I test it in **sqlite** and in 10 parallel requests I got 8 race condition. interesting, isn't it?? as it where told in the challenge's doc, I have to use a production database. I used postgresql as my db. then I lunched my postgres in docker and tried to attack it and send a bunch of requests in parallel to it but the attack was not successful. just one row created in db (I make a user_transaction table to check if user have a submitted coupon or not). So, I set the sleep to 0.002 secounds to make a delay in data base query. now what?? as a resault, I have 2 row created in 200 requests so here, the attack was successful.
  
 
-
+### User guide :
+For tasting race conditions.first need to open  web docker container  And after that run race_condition.py
 
 
 
