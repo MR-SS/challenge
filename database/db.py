@@ -8,8 +8,8 @@ password = os.environ.get("POSTGRES_PASSWORD")
 
 
 
-SQLALCHEMY_DATABASE_URL = f"postgresql://sajjad:sajjad@localhost:5432/coupon"
-# SQLALCHEMY_DATABASE_URL = f"postgresql://{username}:{password}@db:5432/coupon"
+# SQLALCHEMY_DATABASE_URL = f"postgresql://sajjad:sajjad@localhost:5432/coupon"
+SQLALCHEMY_DATABASE_URL = f"postgresql://{username}:{password}@db:5432/coupon"
 # print (SQLALCHEMY_DATABASE_URL)
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL)

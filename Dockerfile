@@ -6,20 +6,15 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 #Add a user with userid 8877 and name nonroot
-RUN useradd  -u 8877 nonroot
-
-
+# RUN useradd  -u 8877 nonroot
 
 WORKDIR /app
 COPY requirements.txt ./
 RUN pip3 install --no-cache-dir -r requirements.txt
-RUN chown -R nonroot:nonroot . 
 #Run Container as nonroot
-USER nonroot
 COPY . .
-
-
+# RUN chown -R nonroot:nonroot /app
 
 # EXPOSE 8000
 
-# CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
+ENTRYPOINT ["uvicorn","main:app","--host","0.0.0.0","--port","8000"]

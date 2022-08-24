@@ -39,7 +39,7 @@ async def limit_api_call(request: Request ,call_next):
     threshhold =20
     period =1
     print ("sallam")
-    req = redis.Redis(host="localhost" ,db=0)
+    req = redis.Redis(host="redis" ,db=0)
     if  not req.exists(key):
         req.set(key,1,ex=period)
     else :
