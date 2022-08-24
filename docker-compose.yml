@@ -5,15 +5,15 @@ version: "3.8"
 services:
   web:
     build: .
-    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uvicorn app.main:app --host 0.0.0.0'
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uvicorn main:app --host 0.0.0.0'
     volumes:
       - .:/app
     ports:
-      - 8008:8000
+      - 8000:8000
     environment:
-      - POSTGRES_USER={POSTGRES_USER}
-      - POSTGRES_PASSWORD={POSTGRES_PASSWORD}
-      - POSTGRES_DB={POSTGRES_DB}
+      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     depends_on:
       - db
 
@@ -24,9 +24,12 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
     environment:
-      - POSTGRES_USER={POSTGRES_USER}
-      - POSTGRES_PASSWORD={POSTGRES_PASSWORD}
-      - POSTGRES_DB={POSTGRES_DB}
+      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      #    restart: unless-stopped
+      # env_file:
+      #   - .env
 
 volumes:
   postgres: 

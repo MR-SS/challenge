@@ -1,21 +1,26 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import os
+
+username = os.environ.get("POSTGRES_USERNAME")
+password = os.environ.get("POSTGRES_PASSWORD")
 
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
-# SQLALCHEMY_DATABASE_URL = "postgresql://user:password@postgresserver/db"
 
+# SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
+SQLALCHEMY_DATABASE_URL = f"postgresql://{username}:{password}@db:5432/coupon"
+print (SQLALCHEMY_DATABASE_URL)
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+    SQLALCHEMY_DATABASE_URL)
 
 Base = declarative_base()
 SessionLocal = sessionmaker(bind=engine, autocommit=False)
 
 def get_test_db():
-    SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+    SQLALCHEMY_DATABASE_URL = f"postgresql://{username}:{password}@db:5432/test"
     test_engine = create_engine(
-        SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+        SQLALCHEMY_DATABASE_URL
     )
     TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
     from .models import Base as ModelsBase
