@@ -9,24 +9,23 @@ all challenge is about make gift coupon system for users that each user can only
   
   
 
-## what features have i implemented on this program?
+## what features this web application has?
 
 -  ****jwt authentication****
 
 -  **throttling** api calls with **Redis**
 
-- user action **logg**
+- User action **log**
 
-- unit test with **pytest**
+- Unit test with **pytest**
 
--
+- It is dockerized
 
   
 
 # Installation
 
-  
-
+ 
 1.git clone https://github.com/MR-SS/challenge.git
 
 2. cd challenge
@@ -67,9 +66,17 @@ it's just simple app. just we have 4 api call:
 
 4. submit-coupon : any user can submit coup
 
+## Using guide
+
+Since we have two different roles in the web application (admin and user) we need to distinguish them and for this, I implemented an endpoint called /login witch is responsible for authenticating users. When a user sends a request to this endpoint along whit his credentials, if he exists in the database as a valid user, he will get a jason object including a **authorization token** witch is a **jwt token** in the response. So in further requests on behalf of this user, we can put this token in a specific header called **Authrization header** in order to keep the user logged in. It is good to note that we only have to include this header in those requests whitch requaire a user to be authorized. Since the implementation of my jwt token was a sample one, I wasn't able to connect it with swagger. So those request witch requaire authorization proccess (request to /generate-coupon & /submit-coupon) should trigger using curl.
+
+    enter code herecurl -X 'POST' 'http://localhost:8000/generate-coupon' -H 'Authrization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaXNfYWRtaW4iOnRydWUsImV4cCI6MTY2MTM3NDA5Mn0.qO30l1oVuvR4-NLqmlBOxc9OGdElP4yqtOJL1vRqhUA' -H 'accept: application/json' -H 'Content-Type: application/json' -d '{ "count": 1}'
+>
+    curl -X 'POST' 'http://localhost:8000/submit-coupon' -H 'Authrization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaXNfYWRtaW4iOnRydWUsImV4cCI6MTY2MTM3NDA5Mn0.qO30l1oVuvR4-NLqmlBOxc9OGdElP4yqtOJL1vRqhUA' -H 'accept: application/json' -H 'Content-Type: application/json' -d '{ "count": 1}'
+
 ## Unit test
 
-i make unit test with pytest framework that's help me to build unit test.
+I make unit test with pytest framework that's help me to build unit test.
 
 consider these things: 
 
@@ -78,8 +85,6 @@ consider these things:
  - all file is in `router/test_api.py`except **race conditions**
  
  
-  
-
 ### Security issue that i found during writing unit test:
 
 first of all i need to have a copy of main database. so i create a test detabase for all my test cases and each test case test a vulnerability like DOS, api rate limt ,jwt attacks ( i user jwt for authorization) and the Big one race conditions ( i think the main point of the challenge is race conditions and how to prevent it )
@@ -110,14 +115,8 @@ first of all i need to have a copy of main database. so i create a test detabase
  - type `python -m pytest -vv`  ** make sure use  -m ** 
 
 ## Race condition 
-Here, the main vulnerabillity is race condition. I make a file called `race_condition.py`. the hole point is db make a condition to check if user used a coupen before or not and after that make an insert query in that db. I test it in **sqlite** and in 10 parallel requests I got 8 race condition. interesting, isn't it?? as it where told in the challenge's doc, I have to use a production database . I used postgresql as my db. the I fired up my postgres in docker and try to attack and send request in parallel and postgres didn't get the race.just one row created in db ( i make a user_transaction table for check if user have a submited coupon or not )  so made sleep( 0.002) to make a delay in data base query and. now what ??  i have 2 row created in 200 request
+Here, the main vulnerabillity is race condition. I make a file called `race_condition.py`. the hole point is db make a condition to check if user used a coupen before or not and after that make an insert query in that db. I test it in **sqlite** and in 10 parallel requests I got 8 race condition. interesting, isn't it?? as it where told in the challenge's doc, I have to use a production database. I used postgresql as my db. then I lunched my postgres in docker and tried to attack it and send a bunch of requests in parallel to it but the attack was not successful. just one row created in db (I make a user_transaction table to check if user have a submitted coupon or not). So, I set the sleep to 0.002 secounds to make a delay in data base query. now what?? as a resault, I have 2 row created in 200 requests so here, the attack was successful.
  
-### Race condition prevention flow:
-In order to prevent from race condition I performed two different approaches. 
-1- First, I used thread locks in python and using it, I locked the thread witch was responsible for checking if the user exists in the user-transaction database or not. So while this thread is procceing it's task, no other thread can execute. This way, two different threads can't execute simultaneously.
-user-transaction database is the database with include users who submitted a coupon before.  So if a user exists in this database, he is not allowed to sumbit another coupon.
-2- Since we are using APIs to implement the functionallity of the app, I considered it as a good practice to set an **API-limit** witch known as throttling in order to prevent bouth race condition and DDOS attacks. So I implemented it using redis.
-
 
 
 
