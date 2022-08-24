@@ -13,7 +13,7 @@ RUN useradd  -u 8877 nonroot
 WORKDIR /app
 COPY requirements.txt ./
 RUN pip3 install --no-cache-dir -r requirements.txt
-
+RUN chown -R nonroot:nonroot . 
 #Run Container as nonroot
 USER nonroot
 COPY . .
