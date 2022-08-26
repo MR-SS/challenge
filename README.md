@@ -34,6 +34,12 @@ all challenge is about make gift coupon system for users that each user can only
 
 now open http://localhost:8000
 
+### NOTE: make sure to create a  **.env**  file and add these variable for create a data base  
+```
+  POSTGRES_USERNAME=sajjad
+  POSTGRES_PASSWORD=sajjad
+  POSTGRES_DB=coupon
+  ```
   
 
 ## More detail about challenge
