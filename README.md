@@ -117,7 +117,11 @@ first of all i need to have a copy of main database. so i create a test detabase
  ## how to run these test
  
  - run the project with `docker-compose up --build -d` command 
- - go inside the we container with  `docker exec -it <container id> bash`
+ - go inside the we postgres container with  `docker exec -it <container id> bash`
+ - psql -d <POSTGRES_DB=coupon>  -U <POSTGRES_USERNAME>   ( username and database name are in  .env file . for me was sajjad and coupon ) 
+ - enter password ( in .env file)
+ - CREATE DATABASE test;
+ - exit from postgres container and run web container ( same as nmber 2 command => docker -exec -it <web container iD >  bash ) 
  - type `python -m pytest -vv`  ** make sure use  -m ** 
 
 ## Race condition 
